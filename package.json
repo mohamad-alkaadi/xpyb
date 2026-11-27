@@ -1,0 +1,34 @@
+{
+  "name": "xpyb",
+  "version": "0.1.0",
+  "description": "Offline slide decks with runnable Python notebooks.",
+  "private": true,
+  "main": "electron/main.js",
+  "bin": {
+    "xpyb": "./bin/xpyb.js"
+  },
+  "scripts": {
+    "postinstall": "install-electron",
+    "build": "vite build",
+    "start": "vite build && electron .",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "electron": "^45.5.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@vitejs/plugin-react": "^6.3.0",
+    "jsdom": "^29.1.1",
+    "tailwindcss": "^4.3.5",
+    "vite": "^8.4.0",
+    "vitest": "^5.1.2"
+  }
+}
