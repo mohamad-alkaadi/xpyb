@@ -5,3 +5,80 @@ body,
 #root {
   height: 100%;
 }
+
+/* Rendered markdown and HTML inside slides: Tailwind resets these element styles. */
+.slide-text {
+  overflow-wrap: anywhere;
+}
+
+.slide-text :is(h1, h2, h3, h4) {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.slide-text h1 {
+  font-size: 1.25em;
+}
+
+.slide-text h2 {
+  font-size: 1.15em;
+}
+
+.slide-text :is(p, ul, ol, pre, table, blockquote) + * {
+  margin-top: 0.4em;
+}
+
+.slide-text :is(ul, ol) {
+  padding-left: 1.4em;
+  text-align: left;
+}
+
+.slide-text ul {
+  list-style: disc;
+}
+
+.slide-text ol {
+  list-style: decimal;
+}
+
+.slide-text a {
+  text-decoration: underline;
+}
+
+.slide-text :is(code, pre) {
+  font-family: ui-monospace, monospace;
+}
+
+.slide-text blockquote {
+  border-left: 0.2em solid currentColor;
+  padding-left: 0.6em;
+}
+
+.slide-text :is(th, td) {
+  border: 1px solid currentColor;
+  padding: 0.1em 0.5em;
+}
+
+/* Code blocks are transparent so the slide background shows through. */
+.slide-code .cm-editor,
+.slide-code .cm-gutters {
+  background: transparent;
+  color: inherit;
+}
+
+.slide-code .cm-gutters {
+  border: none;
+  opacity: 0.5;
+}
+
+.slide-code .cm-content {
+  caret-color: currentColor;
+}
+
+.slide-code .cm-cursor {
+  border-left-color: currentColor;
+}
+
+.slide-code .cm-scroller {
+  overflow: auto;
+}
