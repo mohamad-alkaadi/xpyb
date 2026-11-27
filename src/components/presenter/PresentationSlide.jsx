@@ -12,7 +12,7 @@ const PresentationSlide = () => {
     );
   }
 
-  return <SlideCanvas key={slide.id} slide={slide} liveCellId={liveCellId} />;
+  return <SlideCanvas key={slide.id} slide={slide} isPresenting liveCellId={liveCellId} />;
 };
 
 export default PresentationSlide;

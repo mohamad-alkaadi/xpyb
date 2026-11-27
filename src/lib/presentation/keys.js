@@ -5,6 +5,10 @@ const ACTIONS = Object.freeze({
   Escape: 'escape',
   e: 'unlock',
   E: 'unlock',
+  m: 'cycleMode',
+  M: 'cycleMode',
+  o: 'toggleView',
+  O: 'toggleView',
 });
 
 const TYPING = 'input, textarea, select, [contenteditable="true"]';
@@ -23,7 +27,8 @@ const isForControl = ({ key, target }) => {
 /**
  * Maps a key press to a presentation action. Shift+Enter is handled by the code editor.
  * @param {KeyboardEvent} event Keyboard event.
- * @returns {'next'|'previous'|'escape'|'unlock'|null} Action, or null to ignore the key.
+ * @returns {'next'|'previous'|'escape'|'unlock'|'cycleMode'|'toggleView'|null} Action, or null to
+ *   ignore the key.
  */
 export const getPresenterAction = (event) => {
   const modified = event.ctrlKey || event.metaKey || event.altKey;

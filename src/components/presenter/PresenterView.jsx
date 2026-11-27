@@ -4,6 +4,7 @@ import DeckStatus from '../common/status/DeckStatus.jsx';
 import KernelError from '../common/status/KernelError.jsx';
 import SlideStage from '../slides/SlideStage.jsx';
 import CompileProgress from './CompileProgress.jsx';
+import ModeSwitcherBar from './ModeSwitcherBar.jsx';
 import PresentationSlide from './PresentationSlide.jsx';
 
 const PresenterView = () => {
@@ -15,6 +16,7 @@ const PresenterView = () => {
       aria-label="Presentation"
       className="relative flex h-full items-center justify-center bg-black text-center text-white"
     >
+      {deck && <ModeSwitcherBar />}
       {deck ? (
         <SlideStage label="Presentation slide" backdropClass="bg-black">
           {progress.isReady ? <PresentationSlide /> : <CompileProgress />}

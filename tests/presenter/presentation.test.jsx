@@ -103,7 +103,7 @@ describe('navigation', () => {
     await press('ArrowLeft');
     expect(stage().getByText('Demo')).toBeTruthy();
     expect(stage().queryByRole('textbox')).toBeNull();
-    expect(stage().queryByRole('button')).toBeNull();
+    expect(stage().queryByRole('button', { name: /^Run / })).toBeNull();
     expect(window.xpybApi.runCell).toHaveBeenCalledTimes(2);
   });
 

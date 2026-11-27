@@ -4,8 +4,9 @@ const SlideContext = createContext(null);
 
 /**
  * Reads the slide being rendered.
- * @returns {{slide: object, isEditable: boolean, liveCellId: (string|null)}} Slide, whether it
- *   accepts input, and the focused cell when code is unlocked during a presentation.
+ * @returns {{slide: object, isEditable: boolean, isPresenting: boolean,
+ *   liveCellId: (string|null)}} Slide, whether it accepts input or is being presented, and the
+ *   focused cell when code is unlocked during a presentation.
  */
 export const useSlide = () => {
   const value = useContext(SlideContext);
@@ -13,8 +14,8 @@ export const useSlide = () => {
   return value;
 };
 
-const SlideProvider = ({ slide, isEditable, liveCellId = null, children }) => (
-  <SlideContext.Provider value={{ slide, isEditable, liveCellId }}>
+const SlideProvider = ({ slide, isEditable, isPresenting, liveCellId = null, children }) => (
+  <SlideContext.Provider value={{ slide, isEditable, isPresenting, liveCellId }}>
     {children}
   </SlideContext.Provider>
 );
