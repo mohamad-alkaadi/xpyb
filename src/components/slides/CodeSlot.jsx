@@ -1,47 +1,41 @@
-import { python } from '@codemirror/lang-python';
-import { defaultHighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { oneDarkHighlightStyle } from '@codemirror/theme-one-dark';
-import CodeMirror from '@uiw/react-codemirror';
 import { useDeck } from '../../context/DeckContext.jsx';
 import { useSlide } from '../../context/SlideContext.jsx';
-import { getCodeFontSize, getCodeTheme } from '../../lib/slides/codeTheme.js';
-
-const SETUP = { foldGutter: false, highlightActiveLine: false, highlightActiveLineGutter: false };
+import { useRunCell } from '../../context/useRunCell.js';
+import { canRun } from '../../lib/kernel/results.js';
+import { getCodeAppearance } from '../../lib/slides/codeStyle.js';
+import { getCodeFontSize } from '../../lib/slides/codeTheme.js';
+import CodeBlock from '../common/code/CodeBlock.jsx';
+import CodeSurface from '../common/code/CodeSurface.jsx';
+import PythonEditor from '../common/code/PythonEditor.jsx';
+import RunButton from './RunButton.jsx';
 
 const CodeSlot = ({ slot, cell }) => {
   const { setSlotSource } = useDeck();
   const { slide, isEditable } = useSlide();
+  const { result, run } = useRunCell(cell?.id);
   const source = cell?.source || '';
-  const fontSize = getCodeFontSize(slot);
+  const appearance = getCodeAppearance(slide);
+  const shared = { isDark: appearance.isDark, fontSize: getCodeFontSize(slot) };
 
-  if (!isEditable) {
-    return (
-      <pre className="h-full whitespace-pre-wrap p-2 text-left font-mono font-normal" style={{ fontSize }}>
-        {source}
-      </pre>
-    );
-  }
-
-  const highlight = getCodeTheme(slide.backgroundColor, {
-    light: defaultHighlightStyle,
-    dark: oneDarkHighlightStyle,
-  });
+  const handleChange = (value) =>
+    setSlotSource({ slideId: slide.id, slotId: slot.id, mode: 'code' }, value);
 
   return (
-    <CodeMirror
-      aria-label={`${slot.label} code`}
-      className="slide-code h-full text-left font-normal"
-      style={{ fontSize }}
-      height="100%"
-      theme="none"
-      placeholder="# Python code"
-      basicSetup={SETUP}
-      extensions={[python(), syntaxHighlighting(highlight)]}
-      value={source}
-      onChange={(value) =>
-        setSlotSource({ slideId: slide.id, slotId: slot.id, mode: 'code' }, value)
-      }
-    />
+    <CodeSurface appearance={appearance}>
+      {isEditable ? (
+        <>
+          <PythonEditor {...shared} label={`${slot.label} code`} value={source} onChange={handleChange} onRun={run} />
+          <RunButton
+            label={slot.label}
+            isRunning={result?.status === 'running'}
+            disabled={!canRun(source, result)}
+            onClick={() => run(source)}
+          />
+        </>
+      ) : (
+        <CodeBlock {...shared} code={source} />
+      )}
+    </CodeSurface>
   );
 };
 

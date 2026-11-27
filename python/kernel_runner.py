@@ -98,6 +98,8 @@ def rich_output(data):
         return {"type": "image", "mime": "image/svg+xml", "data": encoded}
     if "text/html" in data:
         return {"type": "html", "html": data["text/html"], "text": data.get("text/plain", "")}
+    if "text/latex" in data:
+        return {"type": "latex", "latex": data["text/latex"], "text": data.get("text/plain", "")}
     if "text/plain" in data:
         return {"type": "stdout", "text": data["text/plain"] + "\n"}
     return None

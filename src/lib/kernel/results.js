@@ -12,6 +12,14 @@ export const collectCodeCells = (deck) =>
     .map((cell) => ({ id: cell.id, code: cell.source }));
 
 /**
+ * Tells whether a cell can be run now: it has code and is not already running.
+ * @param {string} code Python source.
+ * @param {{status: string}} [result] Latest result of the cell.
+ * @returns {boolean} True when the cell can run.
+ */
+export const canRun = (code, result) => Boolean(code.trim()) && result?.status !== 'running';
+
+/**
  * Marks cells as running.
  * @param {Record<string, object>} results Results by cell id.
  * @param {string[]} cellIds Cells being run.

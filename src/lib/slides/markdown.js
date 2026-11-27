@@ -1,5 +1,8 @@
 import DOMPurify from 'dompurify';
-import { marked } from 'marked';
+import { Marked } from 'marked';
+import { MATH_EXTENSIONS, typesetMath } from './math.js';
+
+const parser = new Marked({ extensions: [...MATH_EXTENSIONS] });
 
 const SANITIZE_OPTIONS = Object.freeze({
   FORBID_TAGS: ['style', 'form', 'input', 'button', 'textarea', 'select'],
@@ -14,8 +17,9 @@ const SANITIZE_OPTIONS = Object.freeze({
 export const sanitizeHtml = (html) => DOMPurify.sanitize(html, SANITIZE_OPTIONS);
 
 /**
- * Renders markdown to safe HTML.
+ * Renders markdown with dollar math to safe HTML.
  * @param {string} source Markdown text.
  * @returns {string} Safe HTML.
  */
-export const renderMarkdown = (source) => sanitizeHtml(marked.parse(source || '', { async: false }));
+export const renderMarkdown = (source) =>
+  typesetMath(sanitizeHtml(parser.parse(source || '', { async: false })));

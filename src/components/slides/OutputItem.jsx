@@ -1,16 +1,21 @@
-const OutputItem = ({ item }) => {
-  if (item.kind === 'image') {
-    return <img alt="Cell output" className="max-h-full max-w-full self-start object-contain" src={item.src} />;
-  }
-  if (item.kind === 'html') {
-    return <div className="slide-text" dangerouslySetInnerHTML={{ __html: item.html }} />;
-  }
+import ErrorOutput from './ErrorOutput.jsx';
+import HtmlOutput from './HtmlOutput.jsx';
+import ImageOutput from './ImageOutput.jsx';
+import LatexOutput from './LatexOutput.jsx';
+import StreamOutput from './StreamOutput.jsx';
 
-  return (
-    <pre className={`whitespace-pre-wrap font-mono ${item.kind === 'error' ? 'text-red-500' : ''}`}>
-      {item.text}
-    </pre>
-  );
+const RENDERERS = {
+  text: StreamOutput,
+  error: ErrorOutput,
+  html: HtmlOutput,
+  image: ImageOutput,
+  latex: LatexOutput,
+};
+
+const OutputItem = ({ item }) => {
+  const Renderer = RENDERERS[item.kind];
+
+  return <Renderer item={item} />;
 };
 
 export default OutputItem;

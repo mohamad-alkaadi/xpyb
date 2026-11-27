@@ -23,14 +23,52 @@ const toLinear = (value) => {
 };
 
 /**
+ * Splits a hex color into its sRGB channels.
+ * @param {string} color Hex color; anything else counts as white.
+ * @returns {number[]} Red, green and blue from 0 to 255.
+ */
+const toChannels = (color) => {
+  const hex = normalizeHex(color, '#ffffff');
+  return [1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16));
+};
+
+/**
+ * Computes the WCAG relative luminance of a color.
+ * @param {string} color Hex color.
+ * @returns {number} Luminance from 0 to 1.
+ */
+export const getLuminance = (color) => {
+  const [red, green, blue] = toChannels(color).map(toLinear);
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+};
+
+/**
+ * Computes the WCAG contrast ratio between two colors.
+ * @param {string} first Hex color.
+ * @param {string} second Hex color.
+ * @returns {number} Ratio from 1 to 21.
+ */
+export const getContrastRatio = (first, second) => {
+  const [low, high] = [getLuminance(first), getLuminance(second)].sort((a, b) => a - b);
+  return (high + 0.05) / (low + 0.05);
+};
+
+/**
+ * Computes the color seen when a translucent tint covers a solid color.
+ * @param {string} base Hex color underneath.
+ * @param {string} tint Hex tint color.
+ * @param {number} alpha Tint opacity from 0 to 1.
+ * @returns {string} Resulting `#rrggbb` color.
+ */
+export const blendColors = (base, tint, alpha) => {
+  const under = toChannels(base);
+  const mixed = toChannels(tint).map((value, i) => Math.round(value * alpha + under[i] * (1 - alpha)));
+  return `#${mixed.map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+};
+
+/**
  * Tells whether light text reads better than dark text on a background.
  * @param {string} color Hex background color.
- * @returns {boolean} True for dark backgrounds.
+ * @returns {boolean} True when contrast against white beats contrast against black.
  */
-export const isDarkColor = (color) => {
-  const hex = normalizeHex(color, '#ffffff');
-  const [red, green, blue] = [1, 3, 5].map((at) => toLinear(parseInt(hex.slice(at, at + 2), 16)));
-  const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
-  // Contrast against white beats contrast against black below this luminance.
-  return luminance < 0.179;
-};
+export const isDarkColor = (color) => getLuminance(color) < 0.179;

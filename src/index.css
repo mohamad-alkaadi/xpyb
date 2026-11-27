@@ -59,26 +59,26 @@ body,
   padding: 0.1em 0.5em;
 }
 
-/* Code blocks are transparent so the slide background shows through. */
-.slide-code .cm-editor,
-.slide-code .cm-gutters {
-  background: transparent;
-  color: inherit;
+/* Pandas tables and other HTML outputs. */
+.output-html {
+  overflow-x: auto;
+  flex-shrink: 0;
 }
 
-.slide-code .cm-gutters {
-  border: none;
-  opacity: 0.5;
+.output-html table {
+  border-collapse: collapse;
+  font-size: 0.85em;
 }
 
-.slide-code .cm-content {
-  caret-color: currentColor;
+.output-html :is(th, td) {
+  text-align: right;
 }
 
-.slide-code .cm-cursor {
-  border-left-color: currentColor;
+/* Error colors follow the tone behind the code block. */
+[data-tone='light'] .output-error {
+  color: #b91c1c;
 }
 
-.slide-code .cm-scroller {
-  overflow: auto;
+[data-tone='dark'] .output-error {
+  color: #fca5a5;
 }

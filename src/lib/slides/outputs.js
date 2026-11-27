@@ -1,5 +1,6 @@
 import { getSlotMeta } from '../layouts/slotMapper.js';
 import { sanitizeHtml } from './markdown.js';
+import { renderLatex } from './math.js';
 
 const ANSI_PATTERN = /\u001b\[[0-9;?]*[A-Za-z]/g;
 
@@ -11,6 +12,8 @@ const ANSI_PATTERN = /\u001b\[[0-9;?]*[A-Za-z]/g;
 const join = (value) => (Array.isArray(value) ? value.join('') : value || '');
 
 const image = (mime, data) => ({ kind: 'image', src: `data:${mime};base64,${data}` });
+const latex = (source) => ({ kind: 'latex', html: renderLatex(source) });
+const stream = (kind, text) => ({ kind, text: join(text).replace(ANSI_PATTERN, '') });
 
 /**
  * Picks the richest representation of a notebook display bundle.
@@ -24,20 +27,19 @@ const fromBundle = (data) => {
     return { kind: 'image', src: `data:image/svg+xml,${svg}` };
   }
   if (data['text/html']) return { kind: 'html', html: sanitizeHtml(join(data['text/html'])) };
+  if (data['text/latex']) return latex(join(data['text/latex']));
   return data['text/plain'] ? { kind: 'text', text: join(data['text/plain']) } : null;
 };
 
 const NORMALIZERS = Object.freeze({
-  stdout: (output) => ({ kind: 'text', text: output.text }),
-  stderr: (output) => ({ kind: 'error', text: output.text }),
-  traceback: (output) => ({ kind: 'error', text: output.text }),
+  stdout: (output) => stream('text', output.text),
+  stderr: (output) => stream('error', output.text),
+  traceback: (output) => stream('error', output.text),
   image: (output) => image(output.mime, output.data),
   html: (output) => ({ kind: 'html', html: sanitizeHtml(output.html) }),
-  stream: ({ name, text }) => ({ kind: name === 'stderr' ? 'error' : 'text', text: join(text) }),
-  error: ({ traceback = [] }) => ({
-    kind: 'error',
-    text: traceback.join('\n').replace(ANSI_PATTERN, ''),
-  }),
+  latex: (output) => latex(output.latex),
+  stream: ({ name, text }) => stream(name === 'stderr' ? 'error' : 'text', text),
+  error: ({ traceback = [] }) => stream('error', traceback.join('\n')),
   execute_result: ({ data = {} }) => fromBundle(data),
   display_data: ({ data = {} }) => fromBundle(data),
 });
@@ -45,7 +47,7 @@ const NORMALIZERS = Object.freeze({
 /**
  * Converts kernel or notebook outputs to one display shape.
  * @param {object[]} [outputs] Raw outputs.
- * @returns {object[]} Items of kind text, error, image or html.
+ * @returns {object[]} Items of kind text, error, image, html or latex.
  */
 export const normalizeOutputs = (outputs = []) =>
   outputs

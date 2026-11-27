@@ -1,6 +1,8 @@
 import { useDeck } from '../../context/DeckContext.jsx';
 import DeckStatus from '../common/status/DeckStatus.jsx';
+import CodeStyleControls from './CodeStyleControls.jsx';
 import ColorControls from './ColorControls.jsx';
+import KernelError from './KernelError.jsx';
 import LayoutButton from './LayoutButton.jsx';
 import SlideActions from './SlideActions.jsx';
 
@@ -18,7 +20,9 @@ const EditorToolbar = () => {
           <SlideActions />
           <LayoutButton />
           <ColorControls />
+          <CodeStyleControls />
           <DeckStatus />
+          <KernelError />
         </div>
       )}
     </header>

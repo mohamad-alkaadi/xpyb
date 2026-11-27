@@ -1,9 +1,24 @@
 'use strict';
 
-const { DECK_FORMAT, DECK_VERSION, DEFAULT_SLIDE_STYLE } = require('./constants');
+const {
+  DECK_FORMAT,
+  DECK_VERSION,
+  DEFAULT_SLIDE_STYLE,
+  OPTIONAL_SLIDE_FIELDS,
+} = require('./constants');
 const { createIdAllocator, isValidCellId } = require('./ids');
 const { joinSource } = require('./sourceText');
 const { validateNotebook } = require('./validate');
+
+/**
+ * Picks the optional settings a slide has stored.
+ * @param {object} saved Slide definition stored in notebook metadata.
+ * @returns {object} Present settings only.
+ */
+const optionalFields = (saved) =>
+  Object.fromEntries(
+    OPTIONAL_SLIDE_FIELDS.filter((key) => saved[key] !== undefined).map((key) => [key, saved[key]]),
+  );
 
 /**
  * Builds a slide with default styling for any missing field.
@@ -16,6 +31,7 @@ const createSlide = (id, saved = {}) => ({
   layout: saved.layout || DEFAULT_SLIDE_STYLE.layout,
   backgroundColor: saved.backgroundColor || DEFAULT_SLIDE_STYLE.backgroundColor,
   textColor: saved.textColor || DEFAULT_SLIDE_STYLE.textColor,
+  ...optionalFields(saved),
   cells: [],
 });
 
