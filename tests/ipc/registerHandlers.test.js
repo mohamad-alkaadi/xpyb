@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url);
 const { CHANNELS, registerHandlers } = require('../../electron/lib/ipc/registerHandlers');
 
 describe('IPC handlers', () => {
-  it('registers the three deck channels', () => {
+  it('registers every deck channel', () => {
     const handle = vi.fn();
     registerHandlers({ handle }, () => true);
     expect(handle.mock.calls.map(([channel]) => channel)).toEqual(Object.values(CHANNELS));

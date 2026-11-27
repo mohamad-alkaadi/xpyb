@@ -3,8 +3,8 @@ import { DEFAULT_COLORS } from '../../lib/deck/slideActions.js';
 import { getLayout } from '../../lib/layouts/schemas.js';
 import SlotFrame from './SlotFrame.jsx';
 
-const SlideCanvas = ({ slide, isEditable = false }) => (
-  <SlideProvider slide={slide} isEditable={isEditable}>
+const SlideCanvas = ({ slide, isEditable = false, liveCellId = null }) => (
+  <SlideProvider slide={slide} isEditable={isEditable} liveCellId={liveCellId}>
     <div
       data-testid="slide-canvas"
       className="relative h-full w-full"

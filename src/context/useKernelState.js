@@ -4,7 +4,9 @@ import { applyResults, collectCodeCells, markRunning } from '../lib/kernel/resul
 
 /**
  * Stores cell results and discards those that arrive after a reset.
- * @returns {{results: object, error: (string|null), setError: Function, track: Function, reset: Function}} Result state.
+ * @returns {{results: object, error: (string|null), setError: Function, track: Function,
+ *   reset: Function, clearResults: Function}} Result state; `track` resolves to the finished
+ *   results, or null when the bridge failed.
  */
 const useCellResults = () => {
   const [results, setResults] = useState({});
@@ -23,13 +25,19 @@ const useCellResults = () => {
     try {
       const finished = await task();
       if (isCurrent()) setResults((previous) => applyResults(previous, cellIds, finished));
+      return finished;
     } catch (failure) {
-      if (!isCurrent()) return;
+      if (!isCurrent()) return null;
       setError(failure.message);
       setResults((previous) => applyResults(previous, cellIds, []));
+      return null;
     }
   }, []);
-  return { results, error, setError, track, reset };
+  const clearResults = useCallback(
+    (cellIds) => setResults((previous) => applyResults(previous, cellIds, [])),
+    [],
+  );
+  return { results, error, setError, track, reset, clearResults };
 };
 
 /**
@@ -125,9 +133,9 @@ export const useKernelState = (deck, filePath) => {
   const execution = useExecution(cells.track, deck, filePath);
   const restartKernel = useRestart(cells);
   const interpreters = useInterpreters(filePath, cells);
-  const { reset, results, error } = cells;
+  const { reset, results, error, clearResults } = cells;
   // Results belong to one deck, so opening another one clears them.
   useEffect(() => reset(), [filePath, reset]);
   const isRunning = Object.values(results).some((result) => result.status === 'running');
-  return { results, error, isRunning, restartKernel, ...execution, ...interpreters };
+  return { results, error, isRunning, clearResults, restartKernel, ...execution, ...interpreters };
 };

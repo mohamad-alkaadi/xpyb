@@ -11,7 +11,7 @@ import RunButton from './RunButton.jsx';
 
 const CodeSlot = ({ slot, cell }) => {
   const { setSlotSource } = useDeck();
-  const { slide, isEditable } = useSlide();
+  const { slide, isEditable, liveCellId } = useSlide();
   const { result, run } = useRunCell(cell?.id);
   const source = cell?.source || '';
   const appearance = getCodeAppearance(slide);
@@ -22,9 +22,16 @@ const CodeSlot = ({ slot, cell }) => {
 
   return (
     <CodeSurface appearance={appearance}>
-      {isEditable ? (
+      {isEditable || liveCellId ? (
         <>
-          <PythonEditor {...shared} label={`${slot.label} code`} value={source} onChange={handleChange} onRun={run} />
+          <PythonEditor
+            {...shared}
+            label={`${slot.label} code`}
+            autoFocus={Boolean(liveCellId) && cell?.id === liveCellId}
+            value={source}
+            onChange={handleChange}
+            onRun={run}
+          />
           <RunButton
             label={slot.label}
             isRunning={result?.status === 'running'}

@@ -1,7 +1,7 @@
-import EditorView from './components/editor/EditorView.jsx';
-import PresenterView from './components/presenter/PresenterView.jsx';
+import ViewSwitch from './components/presenter/ViewSwitch.jsx';
 import DeckProvider from './context/DeckContext.jsx';
 import KernelProvider from './context/KernelContext.jsx';
+import PresentationProvider from './context/PresentationContext.jsx';
 import { parseLaunchRequest } from './lib/app/launchRequest.js';
 
 const App = () => {
@@ -9,7 +9,11 @@ const App = () => {
 
   return (
     <DeckProvider initialPath={filePath}>
-      <KernelProvider>{mode === 'present' ? <PresenterView /> : <EditorView />}</KernelProvider>
+      <KernelProvider>
+        <PresentationProvider startPresenting={mode === 'present'}>
+          <ViewSwitch />
+        </PresentationProvider>
+      </KernelProvider>
     </DeckProvider>
   );
 };

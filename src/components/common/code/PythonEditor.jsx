@@ -9,7 +9,7 @@ import { getTransparentTheme, HIGHLIGHT_STYLES } from '../../../lib/slides/codeT
 
 const SETUP = { foldGutter: false, highlightActiveLine: false, highlightActiveLineGutter: false };
 
-const PythonEditor = ({ label, value, isDark, fontSize, onChange, onRun }) => {
+const PythonEditor = ({ label, value, isDark, fontSize, autoFocus, onChange, onRun }) => {
   const extensions = useMemo(
     () => [
       Prec.highest(keymap.of(getRunKeymap(onRun))),
@@ -28,6 +28,7 @@ const PythonEditor = ({ label, value, isDark, fontSize, onChange, onRun }) => {
       theme={getTransparentTheme(isDark)}
       placeholder="# Python code"
       basicSetup={SETUP}
+      autoFocus={autoFocus}
       extensions={extensions}
       value={value}
       onChange={onChange}

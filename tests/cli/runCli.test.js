@@ -34,6 +34,15 @@ describe('runCli', () => {
     expect(deps.logError).toHaveBeenCalledWith('xpyb: boom');
   });
 
+  it.each(['--help', '-h'])('prints the usage guide for %s and does nothing else', async (flag) => {
+    const deps = createDeps();
+    expect(await runCli([flag], deps)).toBe(0);
+    expect(deps.log).toHaveBeenCalledTimes(1);
+    expect(deps.logError).not.toHaveBeenCalled();
+    expect(deps.launch).not.toHaveBeenCalled();
+    expect(deps.convert).not.toHaveBeenCalled();
+  });
+
   it('launches an empty window', async () => {
     const deps = createDeps();
     await runCli([], deps);

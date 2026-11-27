@@ -33,7 +33,7 @@ describe('App', () => {
     bridge(async (filePath) => ({ filePath, deck: { slides: [{}, {}] } }));
     visit('?mode=present&file=%2Fa.xpyb');
     render(<App />);
-    expect(await screen.findByText('2 slides')).toBeTruthy();
+    expect(await screen.findByRole('region', { name: 'Presentation slide' })).toBeTruthy();
     expect(screen.getByRole('main', { name: 'Presentation' })).toBeTruthy();
     expect(screen.queryByRole('heading')).toBeNull();
   });

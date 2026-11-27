@@ -109,4 +109,4 @@ const notebookToDeck = (notebook, options = {}) => {
   };
 };
 
-module.exports = { notebookToDeck };
+module.exports = { createSlide, notebookToDeck };

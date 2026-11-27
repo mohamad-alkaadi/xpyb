@@ -40,6 +40,19 @@ export const addSlide = (state) => {
 };
 
 /**
+ * Renames a copied cell. The copy is editor-made, so it no longer follows the notebook.
+ * @param {object} cell Cloned cell.
+ * @param {Map<string, string>} renamed New id by old id.
+ * @returns {object} Copy.
+ */
+const asCopy = (cell, renamed) => {
+  const { xpybOrigin, ...metadata } = cell.metadata || {};
+  const { outputOf } = getSlotMeta(cell);
+  if (renamed.has(outputOf)) metadata.xpybSlot.outputOf = renamed.get(outputOf);
+  return { ...cell, id: renamed.get(cell.id), metadata: { ...metadata, xpybLocal: true } };
+};
+
+/**
  * Copies cells under new ids and re-points output bindings inside the copy.
  * @param {object[]} cells Source cells.
  * @param {Set<string>} used Taken cell ids.
@@ -48,11 +61,7 @@ export const addSlide = (state) => {
 const cloneCells = (cells, used) => {
   const copies = structuredClone(cells);
   const renamed = new Map(copies.map((cell) => [cell.id, nextId('cell', used)]));
-  return copies.map((cell) => {
-    const { outputOf } = getSlotMeta(cell);
-    if (renamed.has(outputOf)) cell.metadata.xpybSlot.outputOf = renamed.get(outputOf);
-    return { ...cell, id: renamed.get(cell.id) };
-  });
+  return copies.map((cell) => asCopy(cell, renamed));
 };
 
 /**

@@ -18,6 +18,10 @@ describe('parseArgs', () => {
     expect(parseArgs(args, '/work')).toEqual({ command, filePath });
   });
 
+  it.each([[['--help']], [['-h']], [['present', '--help']]])('asks for help with %j', (args) => {
+    expect(parseArgs(args, '/work')).toEqual({ command: 'help', filePath: null });
+  });
+
   it.each([
     [['convert'], 'exactly one .ipynb'],
     [['present'], 'exactly one .xpyb'],

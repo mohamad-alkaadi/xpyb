@@ -28,16 +28,28 @@ const forwardSignals = (child, source) => {
 };
 
 /**
+ * Chooses launch options for an installed app, where the CLI runs on the app binary itself
+ * and that binary loads its bundled app without being told where it is.
+ * @param {NodeJS.ProcessEnv} env CLI environment.
+ * @param {string} execPath Executable running the CLI.
+ * @returns {{electronPath?: string, isPackaged?: boolean}} Options for launchElectron.
+ */
+const installedOptions = (env, execPath) =>
+  env.XPYB_PACKAGED === '1' ? { electronPath: execPath, isPackaged: true } : {};
+
+/**
  * Starts the Electron app and waits for it to exit.
  * @param {string} appRoot Application root directory.
  * @param {string[]} args User arguments forwarded to the main process.
- * @param {{spawn?: Function, electronPath?: string, signalSource?: NodeJS.EventEmitter}} [options] Test overrides.
+ * @param {{spawn?: Function, electronPath?: string, isPackaged?: boolean,
+ *   signalSource?: NodeJS.EventEmitter}} [options] Installed-app settings and test overrides.
  * @returns {Promise<number>} Electron exit code.
  */
 const launchElectron = (appRoot, args, options = {}) => {
   const spawn = options.spawn || childProcess.spawn;
   const electronPath = options.electronPath || require('electron');
-  const child = spawn(electronPath, [appRoot, ...args], {
+  const appArgs = options.isPackaged ? args : [appRoot, ...args];
+  const child = spawn(electronPath, appArgs, {
     stdio: 'inherit',
     env: desktopEnv(process.env),
   });
@@ -48,4 +60,4 @@ const launchElectron = (appRoot, args, options = {}) => {
   }).finally(stopForwarding);
 };
 
-module.exports = { desktopEnv, forwardSignals, launchElectron };
+module.exports = { desktopEnv, forwardSignals, installedOptions, launchElectron };

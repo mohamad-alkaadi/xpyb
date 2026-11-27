@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { findActiveSlide } from '../lib/deck/slideActions.js';
 import * as api from '../lib/ipc/xpybApi.js';
+import { useDeckSave } from './useDeckSave.js';
+import { useNotebookSync } from './useNotebookSync.js';
 import { useSlideActions } from './useSlideActions.js';
 
-const EMPTY = { deck: null, filePath: null, activeSlideId: null };
+// `savedDeck` is the deck object last known to match the file on disk.
+const EMPTY = { deck: null, savedDeck: null, filePath: null, activeSlideId: null };
 
 /**
  * Tracks the status and error message of asynchronous deck tasks.
@@ -29,30 +32,29 @@ const useDeckTask = () => {
 };
 
 /**
- * Builds the actions that load, save and convert decks.
- * @param {{deck: object|null, filePath: string|null}} current Open deck.
+ * Builds the actions that load and convert decks.
  * @param {Function} setCurrent Editor state setter.
  * @param {Function} run Task runner.
- * @returns {{openDeck: Function, saveDeck: Function, convertNotebook: Function}} File actions.
+ * @returns {{openDeck: Function, convertNotebook: Function}} File actions.
  */
-const useDeckFiles = ({ deck, filePath }, setCurrent, run) => {
+const useDeckFiles = (setCurrent, run) => {
   const openDeck = useCallback(
-    (path) => run(async () => setCurrent({ ...EMPTY, ...(await api.openDeck(path)) })),
+    (path) =>
+      run(async () => {
+        const opened = await api.openDeck(path);
+        setCurrent({ ...EMPTY, ...opened, savedDeck: opened.deck });
+      }),
     [run, setCurrent],
-  );
-  const saveDeck = useCallback(
-    () => run(() => api.saveDeck(filePath, deck)),
-    [run, filePath, deck],
   );
   const convertNotebook = useCallback(
     (path) =>
       run(async () => {
         const { deckPath, deck: converted } = await api.convertNotebook(path);
-        setCurrent({ ...EMPTY, deck: converted, filePath: deckPath });
+        setCurrent({ ...EMPTY, deck: converted, savedDeck: converted, filePath: deckPath });
       }),
     [run, setCurrent],
   );
-  return { openDeck, saveDeck, convertNotebook };
+  return { openDeck, convertNotebook };
 };
 
 /**
@@ -63,12 +65,17 @@ const useDeckFiles = ({ deck, filePath }, setCurrent, run) => {
 export const useDeckState = (initialPath) => {
   const [current, setCurrent] = useState(EMPTY);
   const { status, error, run } = useDeckTask();
-  const files = useDeckFiles(current, setCurrent, run);
+  const files = useDeckFiles(setCurrent, run);
+  const saving = useDeckSave(current, setCurrent, run);
   const actions = useSlideActions(setCurrent);
+  const syncNotebook = useNotebookSync(current, setCurrent);
   const { openDeck } = files;
   useEffect(() => {
     if (initialPath) openDeck(initialPath);
   }, [initialPath, openDeck]);
   const activeSlide = findActiveSlide(current.deck, current.activeSlideId);
-  return { ...current, activeSlide, status, error, ...files, ...actions };
+  const { savedDeck, ...open } = current;
+  const isDirty = open.deck !== savedDeck;
+  const state = { ...open, activeSlide, isDirty, status, error };
+  return { ...state, syncNotebook, ...saving, ...files, ...actions };
 };

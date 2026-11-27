@@ -3,11 +3,20 @@
 const path = require('node:path');
 
 const USAGE = [
+  'xpyb - offline slide decks with runnable Python notebooks',
+  '',
   'Usage:',
-  '  xpyb <file.xpyb>               Open a deck',
+  '  xpyb                           Open the editor without a deck',
+  '  xpyb <file.xpyb>               Open a deck in the editor',
   '  xpyb present <file.xpyb>       Present a deck in full screen',
-  '  xpyb convert <notebook.ipynb>  Convert a notebook to a deck',
+  '  xpyb convert <notebook.ipynb>  Create a deck next to a notebook',
+  '  xpyb -h, --help                Show this help',
+  '',
+  'Code runs with the Python on your PATH, so activate a virtual environment',
+  'before starting xpyb, or pick an interpreter in the editor toolbar.',
 ].join('\n');
+
+const HELP_FLAGS = ['-h', '--help'];
 
 const EXTENSIONS = { open: '.xpyb', present: '.xpyb', convert: '.ipynb' };
 
@@ -33,9 +42,11 @@ const fileCommand = (command, rest, cwd) => {
  * Parses user arguments (without the executable and script entries).
  * @param {string[]} args Command-line arguments.
  * @param {string} cwd Directory used to resolve relative paths.
- * @returns {{command: 'launch'|'open'|'present'|'convert', filePath: (string|null)}} Parsed command.
+ * @returns {{command: 'help'|'launch'|'open'|'present'|'convert', filePath: (string|null)}}
+ *   Parsed command. A help flag anywhere wins over the other arguments.
  */
 const parseArgs = (args, cwd) => {
+  if (args.some((arg) => HELP_FLAGS.includes(arg))) return { command: 'help', filePath: null };
   if (args.length === 0) return { command: 'launch', filePath: null };
   const [first, ...rest] = args;
   if (first === 'convert' || first === 'present') {

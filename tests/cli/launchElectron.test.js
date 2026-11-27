@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { describe, expect, it, vi } from 'vitest';
 
 const require = createRequire(import.meta.url);
-const { desktopEnv, launchElectron } = require('../../electron/lib/cli/launchElectron');
+const { desktopEnv, installedOptions, launchElectron } = require('../../electron/lib/cli/launchElectron');
 
 describe('launchElectron', () => {
   it('removes only the run-as-node flag from the environment', () => {
@@ -19,6 +19,17 @@ describe('launchElectron', () => {
     child.emit('close', 3);
     expect(await result).toBe(3);
     expect(spawn.mock.calls[0].slice(0, 2)).toEqual(['/electron', ['/app', '/a.xpyb']]);
+  });
+
+  it('starts an installed app without an app directory argument', async () => {
+    const child = new EventEmitter();
+    const spawn = vi.fn(() => child);
+    const options = { spawn, ...installedOptions({ XPYB_PACKAGED: '1' }, '/opt/xpyb-app') };
+    const result = launchElectron('/app', ['/a.xpyb'], options);
+    child.emit('close', 0);
+    await result;
+    expect(spawn.mock.calls[0].slice(0, 2)).toEqual(['/opt/xpyb-app', ['/a.xpyb']]);
+    expect(installedOptions({}, '/node')).toEqual({});
   });
 
   it('rejects when Electron cannot start', async () => {

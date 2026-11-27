@@ -3,7 +3,7 @@
 
 const path = require('node:path');
 const { runCli } = require('../electron/lib/cli/runCli');
-const { launchElectron } = require('../electron/lib/cli/launchElectron');
+const { installedOptions, launchElectron } = require('../electron/lib/cli/launchElectron');
 const { convertNotebookFile } = require('../electron/lib/io/deckFiles');
 
 const appRoot = path.resolve(__dirname, '..');
@@ -13,7 +13,8 @@ runCli(process.argv.slice(2), {
   log: (message) => console.log(message),
   logError: (message) => console.error(message),
   convert: convertNotebookFile,
-  launch: (args) => launchElectron(appRoot, args),
+  launch: (args) =>
+    launchElectron(appRoot, args, installedOptions(process.env, process.execPath)),
 }).then((exitCode) => {
   process.exitCode = exitCode;
 });

@@ -1,11 +1,17 @@
 'use strict';
 
-const { convertNotebookFile, readDeck, writeDeck } = require('../io/deckFiles');
+const {
+  convertNotebookFile,
+  readDeck,
+  syncNotebookFile,
+  writeDeck,
+} = require('../io/deckFiles');
 
 const CHANNELS = Object.freeze({
   openDeck: 'xpyb:open-deck',
   saveDeck: 'xpyb:save-deck',
   convertNotebook: 'xpyb:convert-notebook',
+  syncNotebook: 'xpyb:sync-notebook',
 });
 
 /**
@@ -29,6 +35,7 @@ const registerHandlers = (ipcMain, isTrusted) => {
   ipcMain.handle(CHANNELS.openDeck, guard(isTrusted, readDeck));
   ipcMain.handle(CHANNELS.saveDeck, guard(isTrusted, writeDeck));
   ipcMain.handle(CHANNELS.convertNotebook, guard(isTrusted, convertNotebookFile));
+  ipcMain.handle(CHANNELS.syncNotebook, guard(isTrusted, syncNotebookFile));
 };
 
 module.exports = { CHANNELS, guard, registerHandlers };

@@ -68,7 +68,9 @@ const editSlideSlot = (slide, slotId, { create, edit }) => {
  */
 const createSlotCell = (deck, slotId, mode) => {
   const id = nextId('cell', cellIds(deck));
-  const cell = { id, type: CELL_TYPE_FOR_MODE[mode], source: '', metadata: {}, outputs: [] };
+  // `xpybLocal` marks editor-made cells so a notebook sync never overwrites them by position.
+  const metadata = { xpybLocal: true };
+  const cell = { id, type: CELL_TYPE_FOR_MODE[mode], source: '', metadata, outputs: [] };
   return withSlotMeta(retype(cell, mode), { slot: slotId, mode });
 };
 

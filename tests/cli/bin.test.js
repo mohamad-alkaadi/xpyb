@@ -24,6 +24,20 @@ describe('xpyb binary', () => {
     expect(fs.existsSync(path.join(dir, 'talk.xpyb'))).toBe(true);
   });
 
+  it.each(['--help', '-h'])('prints every command for %s and exits with 0', (flag) => {
+    const result = run([flag], process.cwd());
+    expect(result.status).toBe(0);
+    expect(result.stderr).toBe('');
+    [
+      'Open the editor without a deck',
+      'xpyb <file.xpyb>',
+      'xpyb present <file.xpyb>',
+      'xpyb convert <notebook.ipynb>',
+      '-h, --help',
+    ].forEach((line) => expect(result.stdout).toContain(line));
+    expect(Math.max(...result.stdout.split('\n').map((line) => line.length))).toBeLessThanOrEqual(80);
+  });
+
   it('exits with usage for invalid arguments', () => {
     const result = run(['convert'], process.cwd());
     expect(result.status).toBe(2);

@@ -45,6 +45,10 @@ const runCli = async (args, deps) => {
     deps.logError(`${error.message}\n\n${USAGE}`);
     return 2;
   }
+  if (parsed.command === 'help') {
+    deps.log(USAGE);
+    return 0;
+  }
   try {
     if (parsed.command === 'convert') return await runConvert(parsed.filePath, deps);
     return await runDesktop(parsed, args, deps);

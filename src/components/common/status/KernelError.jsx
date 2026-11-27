@@ -1,4 +1,4 @@
-import { useKernel } from '../../context/KernelContext.jsx';
+import { useKernel } from '../../../context/KernelContext.jsx';
 
 const KernelError = () => {
   const { error } = useKernel();

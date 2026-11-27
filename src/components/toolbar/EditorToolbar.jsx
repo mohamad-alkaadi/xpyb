@@ -2,9 +2,13 @@ import { useDeck } from '../../context/DeckContext.jsx';
 import DeckStatus from '../common/status/DeckStatus.jsx';
 import CodeStyleControls from './CodeStyleControls.jsx';
 import ColorControls from './ColorControls.jsx';
-import KernelError from './KernelError.jsx';
+import KernelError from '../common/status/KernelError.jsx';
+import InterpreterPicker from './InterpreterPicker.jsx';
 import LayoutButton from './LayoutButton.jsx';
+import PresentButton from './PresentButton.jsx';
+import SaveButton from './SaveButton.jsx';
 import SlideActions from './SlideActions.jsx';
+import SyncButton from './SyncButton.jsx';
 
 const EditorToolbar = () => {
   const { deck, filePath } = useDeck();
@@ -17,10 +21,14 @@ const EditorToolbar = () => {
       )}
       {deck && (
         <div className="ml-auto flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+          <SaveButton />
+          <PresentButton />
           <SlideActions />
           <LayoutButton />
           <ColorControls />
           <CodeStyleControls />
+          <SyncButton key={filePath} />
+          <InterpreterPicker />
           <DeckStatus />
           <KernelError />
         </div>

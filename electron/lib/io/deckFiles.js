@@ -3,6 +3,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const { notebookToDeck } = require('../converter/notebookToDeck');
+const { syncDeck } = require('../converter/syncDeck');
 const { validateDeck } = require('../converter/validate');
 
 /**
@@ -97,4 +98,20 @@ const convertNotebookFile = async (notebookPath) => {
   return { deckPath, deck };
 };
 
-module.exports = { convertNotebookFile, readDeck, writeDeck };
+/**
+ * Reloads a deck's cells from its source notebook. Nothing is written to disk.
+ * @param {object} deck Deck JSON.
+ * @param {string} [deckPath] Open deck path, used to resolve a relative notebook path.
+ * @returns {Promise<{deck: object, changedIds: string[], added: number, missing: number}>}
+ *   Sync result.
+ */
+const syncNotebookFile = async (deck, deckPath) => {
+  const source = validateDeck(deck).sourceNotebook;
+  if (!source) throw new Error('This deck has no source notebook.');
+  const relative = typeof source === 'string' && typeof deckPath === 'string';
+  const notebookPath = relative ? path.resolve(path.dirname(deckPath), source) : source;
+  assertPath(notebookPath, '.ipynb');
+  return syncDeck(deck, await readJson(notebookPath));
+};
+
+module.exports = { convertNotebookFile, readDeck, syncNotebookFile, writeDeck };

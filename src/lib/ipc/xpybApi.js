@@ -65,3 +65,24 @@ export const detectInterpreters = async (deckPath) => getBridge().detectInterpre
  * @returns {Promise<{pythonPath: (string|null)}>} Active interpreter path.
  */
 export const setPythonPath = async (pythonPath) => getBridge().setPythonPath(pythonPath);
+
+/**
+ * Reloads a deck's code and markdown from its source notebook.
+ * @param {object} deck Deck JSON.
+ * @param {string|null} deckPath Open deck path.
+ * @returns {Promise<{deck: object, changedIds: string[], added: number, missing: number}>}
+ *   Merged deck and summary.
+ */
+export const syncNotebook = async (deck, deckPath) => getBridge().syncNotebook(deck, deckPath);
+
+/**
+ * Puts the app window into full screen.
+ * @returns {Promise<void>}
+ */
+export const enterFullScreen = async () => getBridge().enterFullScreen();
+
+/**
+ * Takes the app window out of full screen.
+ * @returns {Promise<void>}
+ */
+export const exitFullScreen = async () => getBridge().exitFullScreen();

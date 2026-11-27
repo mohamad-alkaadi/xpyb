@@ -9,6 +9,8 @@ const { createKernelManager } = require('./lib/kernel/kernelManager');
 const { createKernelRegistry, quitAfterKernels } = require('./lib/kernel/kernelRegistry');
 const { pickInterpreter } = require('./lib/kernel/pickInterpreter');
 const { blockNetwork, lockNavigation } = require('./lib/window/offlineGuard');
+const { registerWindowHandlers } = require('./lib/ipc/registerWindowHandlers');
+const { watchOpenFile } = require('./lib/window/openFile');
 const { getLaunchRequest, getWindowOptions, toQuery } = require('./lib/window/windowConfig');
 
 const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
@@ -29,12 +31,17 @@ const createWindow = async (request) => {
 const choosePython = (sender) =>
   pickInterpreter(dialog, BrowserWindow.fromWebContents(sender));
 
+// macOS delivers files opened from Finder as events, possibly before the app is ready.
+const openedFiles = watchOpenFile(app, (request) => createWindow(request));
+
 const start = async () => {
   await app.whenReady();
   blockNetwork(session.defaultSession);
   registerHandlers(ipcMain, isAppPage);
   registerKernelHandlers(ipcMain, { isTrusted: isAppPage, registry: kernels, choosePython });
-  const request = getLaunchRequest(process.argv, Boolean(process.defaultApp), process.cwd());
+  registerWindowHandlers(ipcMain, isAppPage, (sender) => BrowserWindow.fromWebContents(sender));
+  const launched = getLaunchRequest(process.argv, Boolean(process.defaultApp), process.cwd());
+  const request = openedFiles.start() || launched;
   await createWindow(request);
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow(request);

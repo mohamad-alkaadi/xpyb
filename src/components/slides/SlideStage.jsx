@@ -5,7 +5,7 @@ import {
   STAGE_WIDTH,
 } from '../../lib/layouts/viewportScale.js';
 
-const SlideStage = ({ label, children }) => {
+const SlideStage = ({ label, backdropClass = 'bg-slate-900', children }) => {
   const [transform, setTransform] = useState(() => computeStageTransform(0, 0));
   const containerRef = useRef(null);
 
@@ -22,7 +22,7 @@ const SlideStage = ({ label, children }) => {
   const { scale, offsetX, offsetY } = transform;
 
   return (
-    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-slate-900">
+    <div ref={containerRef} className={`relative h-full w-full overflow-hidden ${backdropClass}`}>
       <div
         aria-label={label}
         role={label ? 'region' : undefined}
