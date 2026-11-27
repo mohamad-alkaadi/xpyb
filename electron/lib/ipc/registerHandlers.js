@@ -31,4 +31,4 @@ const registerHandlers = (ipcMain, isTrusted) => {
   ipcMain.handle(CHANNELS.convertNotebook, guard(isTrusted, convertNotebookFile));
 };
 
-module.exports = { CHANNELS, registerHandlers };
+module.exports = { CHANNELS, guard, registerHandlers };
