@@ -2,7 +2,7 @@ const TintSelect = ({ value, onChange }) => (
   <label className="flex items-center gap-1">
     <span>Tint</span>
     <select
-      className="cursor-pointer rounded border border-slate-300 bg-white px-1 py-1"
+      className="cursor-pointer rounded border border-slate-300 bg-white px-1 py-1 dark:border-slate-600 dark:bg-slate-800"
       value={value}
       onChange={(event) => onChange(event.target.value)}
     >

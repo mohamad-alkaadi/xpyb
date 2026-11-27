@@ -7,7 +7,7 @@ const SlideSidebar = () => {
   return (
     <nav
       aria-label="Slides"
-      className="shrink-0 overflow-auto border-t border-slate-200 bg-slate-100 p-2 md:w-44 md:border-r md:border-t-0 lg:w-60"
+      className="shrink-0 overflow-auto border-t border-slate-200 bg-slate-100 p-2 dark:border-slate-700 dark:bg-slate-900 md:w-44 md:border-r md:border-t-0 lg:w-60"
     >
       <ol className="flex gap-2 md:flex-col">
         {deck.slides.map((slide, index) => (

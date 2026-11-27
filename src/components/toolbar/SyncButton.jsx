@@ -27,7 +27,7 @@ const SyncButton = () => {
       <button
         type="button"
         title={deck.sourceNotebook || 'This deck has no source notebook.'}
-        className="cursor-pointer rounded border border-slate-300 px-2 py-1 hover:bg-slate-100 disabled:cursor-default disabled:opacity-40"
+        className="cursor-pointer rounded border border-slate-300 px-2 py-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700 disabled:cursor-default disabled:opacity-40"
         disabled={!deck.sourceNotebook || isBusy}
         onClick={handleClick}
       >
@@ -36,7 +36,7 @@ const SyncButton = () => {
       {report && (
         <p
           role={report.isError ? 'alert' : 'status'}
-          className={`min-w-0 break-words ${report.isError ? 'text-red-600' : 'text-slate-600'}`}
+          className={`min-w-0 break-words ${report.isError ? 'text-red-600 dark:text-red-400' : 'text-slate-600 dark:text-slate-400'}`}
         >
           {report.text}
         </p>

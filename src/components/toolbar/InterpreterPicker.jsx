@@ -17,7 +17,7 @@ const InterpreterPicker = () => {
     <label className="flex min-w-0 items-center gap-1">
       Python
       <select
-        className="min-w-0 max-w-48 rounded border border-slate-300 bg-white px-1 py-1 disabled:opacity-40"
+        className="min-w-0 max-w-48 rounded border border-slate-300 bg-white px-1 py-1 dark:border-slate-600 dark:bg-slate-800 disabled:opacity-40"
         title={pythonPath || 'The Python found in the environment that started xpyb.'}
         disabled={isRunning}
         value={pythonPath || ENVIRONMENT}

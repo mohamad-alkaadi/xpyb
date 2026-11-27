@@ -5,7 +5,7 @@ import {
   STAGE_WIDTH,
 } from '../../lib/layouts/viewportScale.js';
 
-const SlideStage = ({ label, backdropClass = 'bg-slate-900', children }) => {
+const SlideStage = ({ label, backdropClass = 'bg-slate-200 dark:bg-slate-900', children }) => {
   const [transform, setTransform] = useState(() => computeStageTransform(0, 0));
   const containerRef = useRef(null);
 

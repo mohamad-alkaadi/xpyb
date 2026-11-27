@@ -1,4 +1,5 @@
 import { useSlide } from '../../context/SlideContext.jsx';
+import { getTitleAlign, TITLE_SLOT_ID } from '../../lib/layouts/schemas.js';
 import { getSlotMode, mapSlots } from '../../lib/layouts/slotMapper.js';
 import SlotContent from './SlotContent.jsx';
 import SlotModeSwitcher from './SlotModeSwitcher.jsx';
@@ -9,6 +10,10 @@ const SlotFrame = ({ slot }) => {
   const { slide, isEditable } = useSlide();
   const cell = mapSlots(slide).slots[slot.id];
   const { x, y, width, height } = slot.box;
+  const isTitle = slot.id === TITLE_SLOT_ID;
+  const mode = getSlotMode(cell);
+  // A text title is clamped to two lines, and its ellipsis may reach just past the slot.
+  const overflow = isTitle && mode === 'text' ? 'overflow-visible' : 'overflow-auto';
 
   return (
     <div
@@ -19,17 +24,17 @@ const SlotFrame = ({ slot }) => {
       style={{ left: x, top: y, width, height }}
     >
       <div
-        className="flex h-full w-full flex-col overflow-auto"
+        className={`flex h-full w-full flex-col ${overflow}`}
         style={{
           justifyContent: `safe ${VERTICAL[slot.valign]}`,
-          textAlign: slot.align,
+          textAlign: isTitle ? getTitleAlign(slide) : slot.align,
           fontSize: slot.fontSize,
           fontWeight: slot.bold ? 700 : 400,
         }}
       >
         <SlotContent slot={slot} cell={cell} />
       </div>
-      {isEditable && <SlotModeSwitcher slot={slot} mode={getSlotMode(cell)} />}
+      {isEditable && <SlotModeSwitcher slot={slot} mode={mode} />}
     </div>
   );
 };

@@ -8,9 +8,9 @@ const SlideThumbnail = ({ slide, number }) => {
 
   return (
     <li className="flex w-32 shrink-0 items-start gap-1 md:w-full">
-      <span className="w-5 shrink-0 text-right text-xs text-slate-500">{number}</span>
+      <span className="w-5 shrink-0 text-right text-xs text-slate-500 dark:text-slate-400">{number}</span>
       <div
-        className={`relative aspect-video min-w-0 flex-1 rounded border-2 ${isActive ? 'border-sky-600' : 'border-slate-300'}`}
+        className={`relative aspect-video min-w-0 flex-1 rounded border-2 ${isActive ? 'border-sky-600' : 'border-slate-300 dark:border-slate-600'}`}
       >
         <div aria-hidden="true" inert className="pointer-events-none h-full w-full">
           <SlideStage>

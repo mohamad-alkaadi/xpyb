@@ -17,9 +17,15 @@ const slot = (id, label, [x, y, width, height], text = {}) => ({
   ...text,
 });
 
+/** Horizontal alignments a slide may store in its optional `titleAlign` property. */
+export const TITLE_ALIGNMENTS = Object.freeze(['left', 'center', 'right']);
+
+/** Id of the slot that holds the slide title in every layout that has one. */
+export const TITLE_SLOT_ID = 'title';
+
 const centered = { align: 'center', valign: 'center' };
 const heading = { fontSize: 48, bold: true, valign: 'end' };
-const topTitle = slot('title', 'Title', [80, 50, 1120, 110], heading);
+const topTitle = slot('title', 'Title', [80, 32, 1120, 158], heading);
 
 /** The 11 slide layouts, in picker order. */
 export const LAYOUTS = Object.freeze([
@@ -39,15 +45,15 @@ export const LAYOUTS = Object.freeze([
   {
     id: 'titleAndBody',
     name: 'Title and body',
-    slots: [topTitle, slot('body', 'Body', [80, 190, 1120, 480])],
+    slots: [topTitle, slot('body', 'Body', [80, 206, 1120, 480])],
   },
   {
     id: 'twoColumns',
     name: 'Title and two columns',
     slots: [
       topTitle,
-      slot('left', 'Left column', [80, 190, 540, 480], { fontSize: 24 }),
-      slot('right', 'Right column', [660, 190, 540, 480], { fontSize: 24 }),
+      slot('left', 'Left column', [80, 206, 540, 480], { fontSize: 24 }),
+      slot('right', 'Right column', [660, 206, 540, 480], { fontSize: 24 }),
     ],
   },
   { id: 'titleOnly', name: 'Title only', slots: [topTitle] },
@@ -82,8 +88,8 @@ export const LAYOUTS = Object.freeze([
     id: 'bigNumber',
     name: 'Big number',
     slots: [
-      slot('title', 'Big number', [80, 100, 1120, 340], { ...centered, valign: 'end', fontSize: 180, bold: true }),
-      slot('body', 'Description', [160, 470, 960, 170], { fontSize: 30, align: 'center' }),
+      slot('title', 'Big number', [80, 10, 1120, 480], { ...centered, valign: 'end', fontSize: 160, bold: true }),
+      slot('body', 'Description', [160, 500, 960, 170], { fontSize: 30, align: 'center' }),
     ],
   },
   { id: 'blank', name: 'Blank', slots: [] },
@@ -100,3 +106,14 @@ export const DEFAULT_LAYOUT_ID = 'titleAndBody';
 export const getLayout = (layoutId) =>
   LAYOUTS.find((layout) => layout.id === layoutId) ||
   LAYOUTS.find((layout) => layout.id === DEFAULT_LAYOUT_ID);
+
+/**
+ * Reads the alignment of a slide title; a slide without a valid choice follows its layout.
+ * @param {object} [slide] Deck slide.
+ * @returns {'left'|'center'|'right'|null} Alignment, or null when the layout has no title.
+ */
+export const getTitleAlign = (slide) => {
+  const title = getLayout(slide?.layout).slots.find((item) => item.id === TITLE_SLOT_ID);
+  if (!title) return null;
+  return TITLE_ALIGNMENTS.includes(slide?.titleAlign) ? slide.titleAlign : title.align;
+};

@@ -16,7 +16,7 @@ const LayoutButton = () => {
     <>
       <button
         type="button"
-        className="cursor-pointer rounded border border-slate-300 px-2 py-1 hover:bg-slate-100 disabled:cursor-default disabled:opacity-40"
+        className="cursor-pointer rounded border border-slate-300 px-2 py-1 hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-700 disabled:cursor-default disabled:opacity-40"
         disabled={!activeSlide}
         onClick={() => setIsOpen(true)}
       >

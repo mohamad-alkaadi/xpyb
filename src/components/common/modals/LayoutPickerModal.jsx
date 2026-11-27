@@ -22,12 +22,12 @@ const LayoutPickerModal = ({ selectedId, onSelect, onClose }) => {
         aria-modal="true"
         aria-label="Choose a layout"
         tabIndex={-1}
-        className="max-h-full w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-4 text-slate-900 shadow-xl outline-none"
+        className="max-h-full w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-4 text-slate-900 shadow-xl outline-none dark:bg-slate-900 dark:text-slate-100 dark:ring-1 dark:ring-slate-700"
         onKeyDown={(event) => event.key === 'Escape' && onClose()}
       >
         <div className="mb-3 flex items-center justify-between gap-2">
           <h2 className="text-base font-semibold">Choose a layout</h2>
-          <button type="button" className="cursor-pointer rounded px-2 py-1 hover:bg-slate-100" onClick={onClose}>
+          <button type="button" className="cursor-pointer rounded px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-700" onClick={onClose}>
             Close
           </button>
         </div>
@@ -37,7 +37,7 @@ const LayoutPickerModal = ({ selectedId, onSelect, onClose }) => {
               key={layout.id}
               type="button"
               aria-pressed={layout.id === selectedId}
-              className="flex min-w-0 cursor-pointer flex-col gap-1 rounded-md border-2 border-transparent p-1 text-center hover:bg-sky-50 aria-pressed:border-sky-600"
+              className="flex min-w-0 cursor-pointer flex-col gap-1 rounded-md border-2 border-transparent p-1 text-center hover:bg-sky-50 aria-pressed:border-sky-600 dark:hover:bg-slate-800"
               onClick={() => onSelect(layout.id)}
             >
               <LayoutWireframe layout={layout} />

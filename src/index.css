@@ -1,5 +1,17 @@
 @import 'tailwindcss';
 
+/* `dark:` classes follow the app shell theme, not the operating system. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* Native controls and scrollbars follow the shell theme; slides always keep the light ones. */
+[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+[data-testid='slide-canvas'] {
+  color-scheme: light;
+}
+
 html,
 body,
 #root {
@@ -57,6 +69,22 @@ body,
 .slide-text :is(th, td) {
   border: 1px solid currentColor;
   padding: 0.1em 0.5em;
+}
+
+/* Titles wrap onto at most two lines, so their lines sit closer together. */
+.slide-title,
+.slide-title :is(h1, h2, h3, h4) {
+  line-height: 1.1;
+}
+
+/*
+ * Room inside the clipped box for what the line clamp would otherwise cut: the descenders of the
+ * last line, and the ellipsis that centered and right-aligned titles draw past the text width.
+ */
+.slide-title {
+  margin-inline: -1em;
+  padding-inline: 1em;
+  padding-bottom: 0.12em;
 }
 
 /* Pandas tables and other HTML outputs. */
